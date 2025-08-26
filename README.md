@@ -5,7 +5,7 @@
 
     ```shell
     aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 381491955389.dkr.ecr.us-east-1.amazonaws.com
-    docker build -t pdf-renderer .
+    docker build --no-cache -t pdf-renderer .
     docker tag pdf-renderer:latest 381491955389.dkr.ecr.us-east-1.amazonaws.com/pdf-renderer:latest
     docker push 381491955389.dkr.ecr.us-east-1.amazonaws.com/pdf-renderer:latest
     ```
