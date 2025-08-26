@@ -48,6 +48,7 @@ var compression = require("compression");
 
 var app = express();
 app.use(compression());
+app.use(express.json({ limit: "50mb" }));
 app.use(express.static(__dirname + "/public"));
 
 function sendError(res, userError) {
@@ -145,6 +146,7 @@ app.post("/studi", async (req, res) => {
   var forceCompilation = req.query && !!req.query.force;
   var command = req.query && req.query.command ? req.query.command : "pdflatex";
   command = command.trim().toLowerCase();
+
   const body = req.body;
   if (!body.latex || typeof body.latex !== "string") {
     sendError(res, "ERROR: invalid or missing latex source.");
@@ -174,8 +176,7 @@ app.post("/studi", async (req, res) => {
       forceCompilation /* force */,
       null /* downloadName */
     );
-  else sendError(res, "ERROR: failed to process file upload!");
-  utils.unlink(file.path);
+  else sendError(res, "ERROR: failed to process request!");
 });
 
 var multer = require("multer");

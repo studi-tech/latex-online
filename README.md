@@ -11,3 +11,12 @@
     ```
 
 3. Go to the [Lambda](https://us-east-1.console.aws.amazon.com/lambda/home?region=us-east-1#/functions/pdf-renderer?tab=image) and deploy newly pushed image
+
+
+# Local Development
+
+```bash
+docker stop pdf-renderer-local
+docker build -t pdf-renderer-local -f Dockerfile.local .
+docker run -d -p 2700:2700 -t pdf-renderer-local
+```

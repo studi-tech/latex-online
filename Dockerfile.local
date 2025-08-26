@@ -1,0 +1,65 @@
+#####################################################################################
+# Compile this dockerfile with
+#        time sudo docker build -t aslushnikov/latex-online:latest -f Dockerfile .
+# Run docker image
+#       sudo docker run -d -p 2700:2700 --rm --name latex-online aslushnikov/latex-online:latest
+#####################################################################################
+# Latex-Online container
+
+# Rely on official texlive base image.
+# Description: https://gitlab.com/islandoftex/images/texlive
+# Registry viewer: https://gitlab.com/islandoftex/images/texlive/container_registry
+
+############################
+# Stage 1: build the Node app
+############################
+FROM registry.gitlab.com/islandoftex/images/texlive:TL2020-historic-src AS build
+
+RUN apt-get update && \
+    apt-get install ca-certificates -y && \
+    update-ca-certificates
+
+# Install git & Node.JS
+RUN apt-get clean && apt-get update && apt-get install -y git-core nodejs npm && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /opt/latex-online
+COPY package.json package-lock.json ./
+ENV NODE_ENV=production
+RUN npm ci --omit=dev && npm cache clean --force
+
+COPY . .
+
+############################
+# Stage 2: runtime for Lambda
+############################
+FROM registry.gitlab.com/islandoftex/images/texlive:TL2020-historic-src
+
+# Make sure Node exists in the runtime stage too
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+    ca-certificates nodejs npm \
+    lbzip2 bzip2 gzip xz-utils unzip \
+ && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /opt/latex-online
+COPY --from=build /opt/latex-online ./
+
+# 2) Point common caches to /tmp to avoid surprise writes elsewhere
+ENV HOME=/tmp \
+    XDG_CACHE_HOME=/tmp/.cache \
+    XDG_RUNTIME_DIR=/tmp/run \
+    TEXMFVAR=/tmp/texmf-var \
+    TEXMFCONFIG=/tmp/texmf-config
+
+# Your server listens on 2700
+ENV PORT=2700 \
+    NODE_ENV=production \
+    AWS_LWA_PORT=2700 \
+    # Use a TCP readiness check so we don't depend on a specific HTTP path
+    AWS_LWA_READINESS_CHECK_PROTOCOL=tcp \
+    AWS_LWA_READINESS_CHECK_PORT=2700 \
+    AWS_LWA_ASYNC_INIT=true
+
+EXPOSE 2700
+CMD ["node", "app.js"]
