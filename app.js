@@ -153,14 +153,10 @@ app.post("/studi", async (req, res) => {
     return;
   }
   if (!body.imgs) {
-    body.imgs = [];
+    body.imgs = {};
   }
-  if (!Array.isArray(body.imgs)) {
-    sendError(res, "ERROR: invalid or missing images array.");
-    return;
-  }
-  if (body.imgs.some((img) => typeof img !== "string")) {
-    sendError(res, "ERROR: invalid image path in images array.");
+  if (Object.values(body.imgs).some((img) => typeof img !== "string")) {
+    sendError(res, "ERROR: invalid image path in images object.");
     return;
   }
 

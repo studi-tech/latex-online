@@ -18,5 +18,5 @@
 ```bash
 docker stop pdf-renderer-local
 docker build -t pdf-renderer-local -f Dockerfile.local .
-docker run -d -p 2700:2700 -t pdf-renderer-local
+docker run --name pdf-renderer-local -d -p 2700:2700 -t pdf-renderer-local
 ```
