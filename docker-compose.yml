@@ -19,7 +19,7 @@ services:
       - .env
 
   metabase: # ← Metabase OSS
-    image: metabase/metabase:v0.54.8 # official arm image
+    image: metabase/metabase:v0.54.8
     platform: linux/amd64
     container_name: metabase
     expose:
