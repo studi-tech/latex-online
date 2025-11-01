@@ -18,7 +18,7 @@ services:
 
   metabase: # ← Metabase OSS
     image: metabase/metabase:v0.54.8 # official arm image
-    platform: linux/arm64/v8
+    platform: linux/amd64
     container_name: metabase
     expose:
       - "3000"
