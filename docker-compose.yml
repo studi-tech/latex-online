@@ -30,6 +30,6 @@ services:
       - MB_DB_PASS=${MB_DB_PASS}
       - MB_DB_DBNAME=metabase
       - JAVA_TIMEZONE=UTC
-      - MB_SITE_URL=${MB_SITE_URL:-http://localhost:3000/metabase} # Address pointing to Metabase Root URL
+      - MB_SITE_URL=${MB_SITE_URL:-http://localhost:3000/metabase}
     volumes:
       - metabase-data:/metabase-data # persistent Metabase config
