@@ -13,7 +13,7 @@
 ############################
 # Stage 1: build the Node app
 ############################
-FROM registry.gitlab.com/islandoftex/images/texlive:TL2020-historic-src AS build
+FROM registry.gitlab.com/islandoftex/images/texlive:TL2020-historic-src
 
 RUN apt-get update && \
     apt-get install ca-certificates -y && \
