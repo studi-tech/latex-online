@@ -1,0 +1,35 @@
+services:
+  proxy:
+    image: nginx:1.25-alpine
+    container_name: edge-proxy
+    ports:
+      - "80:80" # the ONE host-port EB will publish
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - app
+      - metabase
+
+  app:
+    image: __APP_IMAGE__
+    container_name: latexonline
+    expose: # internal-only, no host mapping
+      - "2700"
+
+  metabase: # ← Metabase OSS
+    image: metabase/metabase:v0.54.8 # official arm image
+    platform: linux/arm64/v8
+    container_name: metabase
+    expose:
+      - "3000"
+    environment:
+      - MB_DB_TYPE=postgres
+      - MB_DB_HOST=${DB_HOST}
+      - MB_DB_PORT=5432
+      - MB_DB_USER=${MB_DB_USER}
+      - MB_DB_PASS=${MB_DB_PASS}
+      - MB_DB_DBNAME=metabase
+      - JAVA_TIMEZONE=UTC
+      - MB_SITE_URL=${MB_SITE_URL:-http://localhost:3000/metabase} # Address pointing to Metabase Root URL
+    volumes:
+      - metabase-data:/metabase-data # persistent Metabase config
