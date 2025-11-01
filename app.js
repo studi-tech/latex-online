@@ -200,3 +200,8 @@ app.post("/data", upload.any(), async (req, res) => {
   else sendError(res, "ERROR: failed to process file upload!");
   utils.unlink(file.path);
 });
+
+// 404 for everything else.
+app.use((req, res) => {
+  res.status(404).send("Not Found");
+});
