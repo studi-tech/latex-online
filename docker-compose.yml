@@ -35,3 +35,6 @@ services:
       - MB_SITE_URL=${MB_SITE_URL:-http://localhost:3000/metabase}
     volumes:
       - metabase-data:/metabase-data # persistent Metabase config
+
+volumes:
+  metabase-data:
